@@ -117,3 +117,45 @@ function displayMovie(movie, movies) {
     displayMovie(movies[currentMovieIndex], movies);
   });
 }
+ 
+document.getElementById("view-saved-button").addEventListener("click", () => {
+  const savedMovies = JSON.parse(localStorage.getItem("savedMovies")) || [];
+  displaySavedMovies(savedMovies);
+});
+
+
+function displaySavedMovies(movies) {
+  const moviesList = document.getElementById("movies-list");
+  moviesList.innerHTML = "";
+
+  if (movies.length === 0) {
+    moviesList.innerHTML = `<p>No saved movies found.</p>`;
+    return;
+  }
+
+  movies.forEach((movie) => {
+    const movieElement = document.createElement("div");
+    movieElement.classList.add("movie");
+    movieElement.innerHTML = `
+      <img src="https://image.tmdb.org/t/p/w400/${movie.poster_path}" alt="${
+      movie.title
+    }">
+      <h3>${movie.title} (${
+      movie.release_date ? movie.release_date.split("-")[0] : "Unknown"
+    })</h3>
+      <p>Rating: ${movie.vote_average}</p>
+      <button class="remove-saved-button" data-id="${
+        movie.id
+      }">Remove from Saved</button>
+    `;
+    moviesList.appendChild(movieElement);
+  });
+
+  document.querySelectorAll(".remove-saved-button").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      const movieId = event.target.getAttribute("data-id");
+      removeSavedMovie(movieId);
+      displaySavedMovies(JSON.parse(localStorage.getItem("savedMovies")) || []);
+    });
+  });
+}
