@@ -5,9 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./styles/style.css">
     <script type="module" defer src="./scripts/script.js"></script>
-    <title>Document</title>
+    <title>Movie-Adviser</title>
 </head>
 <body>
-    
+    <div class="filter-bar">
+        <select id="genre">
+            <option value="">Select Genre</option>
+        </select>
+        <input
+            type="number"
+            id="rating"
+            placeholder="Minimum Rating (1-10)"
+            min="1"
+            max="10"
+            required
+        />
+        <input
+            type="number"
+            id="year"
+            placeholder="Release Year"
+            min="1900"
+            max="2024"
+            required
+        />
+        <button id="search-button">Find</button>
+         <button id="view-saved-button">View Saved Movies</button>
+    </div>
+    <div id="movies-list"></div>
+    <div id="background-container">
+        <img class="background-img" alt="Movie Poster 1" />
+        <img class="background-img" alt="Movie Poster 2" />
+        <img class="background-img" alt="Movie Poster 3" />
+    </div>
 </body>
 </html>
