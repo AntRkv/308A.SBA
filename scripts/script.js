@@ -159,3 +159,19 @@ function displaySavedMovies(movies) {
     });
   });
 }
+
+
+function removeSavedMovie(movieId) {
+  let savedMovies = JSON.parse(localStorage.getItem("savedMovies")) || [];
+  savedMovies = savedMovies.filter((movie) => movie.id != movieId);
+  localStorage.setItem("savedMovies", JSON.stringify(savedMovies));
+  alert("Movie has been removed from saved.");
+}
+
+function saveForLater(movie) {
+  let savedMovies = JSON.parse(localStorage.getItem("savedMovies")) || [];
+  savedMovies.push(movie);
+  localStorage.setItem("savedMovies", JSON.stringify(savedMovies));
+  alert(`"${movie.title}" has been saved for later.`);
+}
+
