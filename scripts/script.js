@@ -112,17 +112,17 @@ function displayMovie(movie, movies) {
     displayMovie(movies[currentMovieIndex], movies);
   });
 
-  notInterestedButton.addEventListener("click", () => {
+  notInterestedButton.addEventListener("click", (event) => {
+    event.stopPropagation();
     currentMovieIndex = (currentMovieIndex + 1) % movies.length;
     displayMovie(movies[currentMovieIndex], movies);
   });
 }
- 
+
 document.getElementById("view-saved-button").addEventListener("click", () => {
   const savedMovies = JSON.parse(localStorage.getItem("savedMovies")) || [];
   displaySavedMovies(savedMovies);
 });
-
 
 function displaySavedMovies(movies) {
   const moviesList = document.getElementById("movies-list");
@@ -160,7 +160,6 @@ function displaySavedMovies(movies) {
   });
 }
 
-
 function removeSavedMovie(movieId) {
   let savedMovies = JSON.parse(localStorage.getItem("savedMovies")) || [];
   savedMovies = savedMovies.filter((movie) => movie.id != movieId);
@@ -175,3 +174,58 @@ function saveForLater(movie) {
   alert(`"${movie.title}" has been saved for later.`);
 }
 
+let moviePosters = [];
+let currentPosterIndex = [0, 1, 2];
+
+async function fetchMoviePosters() {
+  const genre = document.getElementById("genre").value || "28";
+  const response = await fetch(
+    `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=${genre}`
+  );
+  const data = await response.json();
+
+  moviePosters = data.results
+    .map((movie) => `https://image.tmdb.org/t/p/original/${movie.poster_path}`)
+    .filter((poster) => poster !== "https://image.tmdb.org/t/p/original/null");
+}
+
+function changePosters() {
+  if (moviePosters.length > 0) {
+    const posterElements = document.querySelectorAll(".background-img");
+    posterElements.forEach((posterElement, index) => {
+      currentPosterIndex[index] =
+        (currentPosterIndex[index] + 1) % moviePosters.length;
+      posterElement.src = moviePosters[currentPosterIndex[index]];
+    });
+  }
+}
+
+function startPostersChange() {
+  fetchMoviePosters().then(() => {
+    setInterval(changePosters, 5000);
+  });
+}
+
+document.addEventListener("click", (event) => {
+  const movieElement = document.querySelector(".movie");
+  const viewSavedButton = document.getElementById("view-saved-button");
+  const searchButton = document.getElementById("search-button");
+
+  if (
+    event.target.tagName === "BUTTON" ||
+    (viewSavedButton && viewSavedButton.contains(event.target)) ||
+    (searchButton && searchButton.contains(event.target))
+  ) {
+    return;
+  }
+
+  if (movieElement && !movieElement.contains(event.target)) {
+    const moviesList = document.getElementById("movies-list");
+    moviesList.innerHTML = "";
+
+    const backgroundContainer = document.getElementById("background-container");
+    backgroundContainer.style.opacity = "1";
+  }
+});
+
+window.addEventListener("load", startPostersChange);
